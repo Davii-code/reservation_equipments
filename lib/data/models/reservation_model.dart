@@ -12,15 +12,27 @@ class Reservation {
   });
 
   String get userName => user;
-
   String get equipmentName => equipment;
 
   factory Reservation.fromJson(Map<String, dynamic> json) {
+    // Safely parse `id`, allowing int or num, default to 0 if missing/invalid
+    final rawId = json['id'];
+    final id = rawId is int
+        ? rawId
+        : rawId is num
+        ? rawId.toInt()
+        : 0;
+
+    // Safely parse strings, defaulting to empty
+    final user = json['user']?.toString() ?? '';
+    final equipment = json['typeEquipment']?.toString() ?? '';
+    final date = json['reservationDate']?.toString() ?? '';
+
     return Reservation(
-      id: json['id'] as int,
-      user: json['user'] as String,
-      equipment: json['equipment'] as String,
-      date: json['date'] as String,
+      id: id,
+      user: user,
+      equipment: equipment,
+      date: date,
     );
   }
 

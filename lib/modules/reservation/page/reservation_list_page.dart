@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../controllers/reservation_controller.dart';
 
 class ReservationsListPage extends ConsumerStatefulWidget {
@@ -47,17 +48,19 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
           if (reservations.isEmpty) {
             return const Center(child: Text('Nenhuma reserva encontrada.'));
           }
+
           return ListView.builder(
             controller: _scrollController,
             itemCount: reservations.length,
             itemBuilder: (context, index) {
               final reservation = reservations[index];
+              final formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(reservation.date));
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   title: Text('Reserva de ${reservation.equipmentName}'),
                   subtitle: Text('Usuário: ${reservation.userName}\n'
-                      'Data: ${reservation.date}'),
+                      'Data: ${formattedDate}'),
                   isThreeLine: true,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,

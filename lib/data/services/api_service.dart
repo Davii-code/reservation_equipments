@@ -99,6 +99,20 @@ class ApiService {
     return Reservation.fromJson(response.data);
   }
 
+  Future<Reservation> createReservationWithPayload(Map<String, dynamic> payload) async {
+    final response = await _dio.post(
+      'reservation',
+      data: payload,
+    );
+    return Reservation.fromJson(response.data);
+  }
+
+  Future<Reservation> fetchReservationById(int id) async {
+    final response = await _dio.get('reservation/$id');
+    return Reservation.fromJson(response.data);
+  }
+
+
   Future<Reservation> updateReservation(Reservation reservation) async {
     final response = await _dio.put(
       'reservation/${reservation.id}',

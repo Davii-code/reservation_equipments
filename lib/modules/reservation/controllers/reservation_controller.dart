@@ -53,6 +53,17 @@ class ReservationsNotifier extends StateNotifier<AsyncValue<List<Reservation>>> 
     }
   }
 
+  Future<void> createReservationWithPayload(Map<String, dynamic> payload) async {
+    try {
+      final newRes = await _apiService.createReservationWithPayload(payload);
+      final current = state.value ?? [];
+      state = AsyncValue.data([newRes, ...current]);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+
   /// Atualiza uma reserva existente.
   Future<void> updateReservation(Reservation reservation) async {
     try {
