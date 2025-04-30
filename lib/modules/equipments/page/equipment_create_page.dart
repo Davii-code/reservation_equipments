@@ -44,8 +44,19 @@ class _EquipmentCreatePageState extends ConsumerState<EquipmentCreatePage> {
         state: _state,
       );
 
-      await ref.read(equipmentsNotifierProvider.notifier).addEquipment(newEquipment);
-      if (mounted) {
+      // Dispara a atualização
+      final notifier = ref.read(equipmentsNotifierProvider.notifier);
+      await notifier.addEquipment(newEquipment);
+
+      // Lê o estado após a atualização
+      final stateAfter = ref.read(equipmentsNotifierProvider);
+      final hadError = stateAfter.maybeWhen(
+        error: (_, __) => true,
+        orElse: () => false,
+      );
+
+      // Só pop se não houve erro
+      if (!hadError && mounted) {
         Navigator.pop(context);
       }
     }

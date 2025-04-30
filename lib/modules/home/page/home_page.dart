@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reservation_equipments/modules/equipments/page/equipments_list_page.dart';
+import 'package:reservation_equipments/modules/users/page/user_list_page.dart';
 import '../../reservation/page/reservation_list_page.dart';
 import 'landing_page_content.dart';
 
@@ -45,6 +46,17 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ReservationsListPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Usuários'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UsersListPage()),
                 );
               },
             ),

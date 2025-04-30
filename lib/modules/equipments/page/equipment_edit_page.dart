@@ -55,8 +55,21 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         state: _state,
       );
 
-      await ref.read(equipmentsNotifierProvider.notifier).updateEquipment(updated);
-      if (mounted) Navigator.pop(context);
+      // Dispara a atualização
+      final notifier = ref.read(equipmentsNotifierProvider.notifier);
+      await notifier.updateEquipment(updated);
+
+      // Lê o estado após a atualização
+      final stateAfter = ref.read(equipmentsNotifierProvider);
+      final hadError = stateAfter.maybeWhen(
+        error: (_, __) => true,
+        orElse: () => false,
+      );
+
+      // Só pop se não houve erro
+      if (!hadError && mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 

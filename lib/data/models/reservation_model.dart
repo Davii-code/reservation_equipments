@@ -1,8 +1,8 @@
 class Reservation {
   final int id;
-  final String user;           // Nome do usuário que fez a reserva
-  final String equipment;      // Nome do equipamento reservado
-  final String date;           // Data da reserva (formato String por simplicidade)
+  final String user;
+  final String equipment;
+  final String date;
 
   Reservation({
     required this.id,
@@ -11,13 +11,10 @@ class Reservation {
     required this.date,
   });
 
-  // Getter para compatibilidade com a interface de listagem
   String get userName => user;
 
-  // Getter para compatibilidade com a interface de listagem
   String get equipmentName => equipment;
 
-  // Método para converter de JSON para Reservation
   factory Reservation.fromJson(Map<String, dynamic> json) {
     return Reservation(
       id: json['id'] as int,
@@ -27,7 +24,6 @@ class Reservation {
     );
   }
 
-  // Método para converter Reservation para JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,

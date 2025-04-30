@@ -82,7 +82,6 @@ class EquipmentsNotifier extends StateNotifier<AsyncValue<List<Equipment>>> {
         state = AsyncValue.data(list.where((e) => e.id != id).toList());
       }
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
     }
   }
 }

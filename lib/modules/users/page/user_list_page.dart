@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../controllers/reservation_controller.dart';
+import '../controllers/users_controller.dart';
 
-class ReservationsListPage extends ConsumerStatefulWidget {
-  const ReservationsListPage({Key? key}) : super(key: key);
+class UsersListPage extends ConsumerStatefulWidget {
+  const UsersListPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ReservationsListPage> createState() => _ReservationsListPageState();
+  ConsumerState<UsersListPage> createState() => _UsersListPageState();
 }
 
-class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
+class _UsersListPageState extends ConsumerState<UsersListPage> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      final notifier = ref.read(reservationsNotifierProvider.notifier);
-      final state = ref.watch(reservationsNotifierProvider);
+      final notifier = ref.read(usersNotifierProvider.notifier);
+      final state = ref.watch(usersNotifierProvider);
       if (!state.isLoading &&
           notifier.hasListeners &&
           _scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200) {
-        notifier.fetchReservations();
+        notifier.fetchUsers();
       }
     });
   }
@@ -36,28 +36,27 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(reservationsNotifierProvider);
+    final state = ref.watch(usersNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reservas'),
+        title: const Text('Usuários'),
       ),
       body: state.when(
-        data: (reservations) {
-          if (reservations.isEmpty) {
-            return const Center(child: Text('Nenhuma reserva encontrada.'));
+        data: (users) {
+          if (users.isEmpty) {
+            return const Center(child: Text('Nenhum usuário encontrado.'));
           }
           return ListView.builder(
             controller: _scrollController,
-            itemCount: reservations.length,
+            itemCount: users.length,
             itemBuilder: (context, index) {
-              final reservation = reservations[index];
+              final user = users[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
-                  title: Text('Reserva de ${reservation.equipmentName}'),
-                  subtitle: Text('Usuário: ${reservation.userName}\n'
-                      'Data: ${reservation.date}'),
+                  title: Text(user.name),
+                  subtitle: Text('Email: ${user.email} \ Nome: ${user.name}'),
                   isThreeLine: true,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -65,7 +64,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
                       IconButton(
                         icon: const Icon(Icons.edit),
                         onPressed: () {
-                          context.pushNamed('reservation_edit', extra: reservation);
+                          context.pushNamed('users_edit', extra: user);
                         },
                       ),
                       IconButton(
@@ -75,7 +74,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
                             context: context,
                             builder: (_) => AlertDialog(
                               title: const Text('Confirmar remoção'),
-                              content: const Text('Deseja realmente excluir esta reserva?'),
+                              content: const Text('Deseja realmente excluir este usuário?'),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, false),
@@ -90,8 +89,8 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
                           );
                           if (confirm == true) {
                             await ref
-                                .read(reservationsNotifierProvider.notifier)
-                                .deleteReservation(reservation.id!);
+                                .read(usersNotifierProvider.notifier)
+                                .deleteUser(user.id!);
                           }
                         },
                       ),
@@ -107,7 +106,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.pushNamed('reservation_create');
+          context.pushNamed('users_create');
         },
         child: const Icon(Icons.add),
       ),

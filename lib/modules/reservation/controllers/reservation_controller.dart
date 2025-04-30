@@ -77,7 +77,6 @@ class ReservationsNotifier extends StateNotifier<AsyncValue<List<Reservation>>> 
         state = AsyncValue.data(list.where((r) => r.id != id).toList());
       }
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
     }
   }
 

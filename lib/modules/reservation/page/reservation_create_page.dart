@@ -33,8 +33,21 @@ class _ReservationCreatePageState extends ConsumerState<ReservationCreatePage> {
         date: DateFormat('dd/MM/yyyy').format(_selectedDate!),
       );
 
-      await ref.read(reservationsNotifierProvider.notifier).addReservation(newReservation);
-      if (mounted) Navigator.pop(context);
+      // Dispara a atualização
+      final notifier = ref.read(reservationsNotifierProvider.notifier);
+      await notifier.addReservation(newReservation);
+
+      // Lê o estado após a atualização
+      final stateAfter = ref.read(reservationsNotifierProvider);
+      final hadError = stateAfter.maybeWhen(
+        error: (_, __) => true,
+        orElse: () => false,
+      );
+
+      // Só pop se não houve erro
+      if (!hadError && mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 

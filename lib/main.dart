@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/routes.dart';
 import 'modules/home/page/home_page.dart';
 
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 void main() {
   runApp(
     ProviderScope(
@@ -14,10 +16,11 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       title: 'Reserva de Equipamentos',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(), // <-- Aqui você define qual tela abrir primeiro
+      routerConfig: router, // Aqui está o segredo
     );
   }
 }

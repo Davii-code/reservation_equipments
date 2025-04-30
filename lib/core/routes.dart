@@ -3,20 +3,30 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservation_equipments/data/models/reservation_model.dart';
+import 'package:reservation_equipments/data/models/users_model.dart';
+import 'package:reservation_equipments/modules/home/page/home_page.dart';
 import 'package:reservation_equipments/modules/reservation/page/reservation_create_page.dart';
 import 'package:reservation_equipments/modules/reservation/page/reservation_edit_page.dart';
 import 'package:reservation_equipments/modules/reservation/page/reservation_list_page.dart';
+import 'package:reservation_equipments/modules/users/page/user_create_page.dart';
+import 'package:reservation_equipments/modules/users/page/user_edit_page.dart';
+import 'package:reservation_equipments/modules/users/page/user_list_page.dart';
 
 import '../data/models/equipment_model.dart';
 import '../modules/equipments/page/equipment_create_page.dart';
 import '../modules/equipments/page/equipment_edit_page.dart';
 import '../modules/equipments/page/equipments_list_page.dart';
-/// Configuração de rotas usando GoRouter.
+
 final GoRouter router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
       path: '/',
+      name: 'home',
+      builder: (context, state) => HomePage(),
+    ),
+    GoRoute(
+      path: '/equipments',
       name: 'equipments_list',
       builder: (context, state) => const EquipmentsListPage(),
     ),
@@ -29,29 +39,45 @@ final GoRouter router = GoRouter(
       path: '/equipments/edit',
       name: 'equipment_edit',
       builder: (context, state) {
-        // Recebe o Equipment via extra ao navegar
         final equipment = state.extra as Equipment;
         return EquipmentEditPage(equipment: equipment);
       },
     ),
     GoRoute(
-      path: '/',
+      path: '/reservations',
       name: 'reservation_list',
       builder: (context, state) => const ReservationsListPage(),
     ),
     GoRoute(
-      path: '/reservation/create',
+      path: '/reservations/create',
       name: 'reservation_create',
       builder: (context, state) => const ReservationCreatePage(),
     ),
     GoRoute(
-      path: '/reservation/edit',
+      path: '/reservations/edit',
       name: 'reservation_edit',
       builder: (context, state) {
-        // Recebe o Equipment via extra ao navegar
         final reservation = state.extra as Reservation;
         return ReservationEditPage(reservation: reservation);
       },
-    )
+    ),
+    GoRoute(
+      path: '/users',
+      name: 'users_list',
+      builder: (context, state) => const UsersListPage(),
+    ),
+    GoRoute(
+      path: '/users/create',
+      name: 'users_create',
+      builder: (context, state) => const UserCreatePage(),
+    ),
+    GoRoute(
+      path: '/users/edit',
+      name: 'users_edit',
+      builder: (context, state) {
+        final user = state.extra as UserModel;
+        return UserEditPage(user: user);
+      },
+    ),
   ],
 );
