@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reservation_equipments/data/models/users_model.dart';
-import 'package:reservation_equipments/modules/equipments/controllers/equipments_controller.dart';
+import '../../equipments/controllers/equipments_controller.dart';
 import '../controllers/users_controller.dart';
 
 class UserEditPage extends ConsumerStatefulWidget {
@@ -17,24 +17,16 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
   bool _loading = true;
   late UserModel _fullUser;
 
-  late TextEditingController _loginController;
-  late TextEditingController _registrationCodeController;
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  late bool _active;
+  final _loginController = TextEditingController();
+  final _registrationCodeController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool _active = true;
 
   @override
   void initState() {
     super.initState();
-    _loginController = TextEditingController();
-    _registrationCodeController = TextEditingController();
-    _nameController = TextEditingController();
-    _emailController = TextEditingController();
-
-    // Carrega o usuário completo (incluindo login e registrationCode)
-    ref.read(apiServiceProvider)
-        .fetchUserById(widget.user.id!)
-        .then((u) {
+    ref.read(apiServiceProvider).fetchUserById(widget.user.id!).then((u) {
       _fullUser = u;
       _loginController.text = u.login;
       _registrationCodeController.text = u.registrationCode;
@@ -42,9 +34,7 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
       _emailController.text = u.email;
       _active = u.active;
       setState(() => _loading = false);
-    })
-        .catchError((_) {
-      // Se quiser, trate erro de fetch aqui
+    }).catchError((_) {
       setState(() => _loading = false);
     });
   }
@@ -71,12 +61,8 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
       final notifier = ref.read(usersNotifierProvider.notifier);
       await notifier.updateUser(updated);
 
-      // Só sai da tela se não houver erro
       final stateAfter = ref.read(usersNotifierProvider);
-      final hadError = stateAfter.maybeWhen(
-        error: (_, __) => true,
-        orElse: () => false,
-      );
+      final hadError = stateAfter.maybeWhen(error: (_, __) => true, orElse: () => false);
       if (!hadError && mounted) {
         Navigator.pop(context);
       }
@@ -86,6 +72,7 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF2F6FF),
       appBar: AppBar(title: const Text('Editar Usuário')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -98,30 +85,27 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
               TextFormField(
                 controller: _loginController,
                 decoration: const InputDecoration(labelText: 'Login'),
-                validator: (v) =>
-                v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _registrationCodeController,
-                decoration:
-                const InputDecoration(labelText: 'Código de Registro'),
-                validator: (v) =>
-                v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                decoration: const InputDecoration(labelText: 'Código de Registro'),
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nome'),
-                validator: (v) =>
-                v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (v) =>
-                v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                validator: (v) => v != null && !RegExp(r"^[\w\.-]+@[\w\.-]+\.\w+$").hasMatch(v)
+                    ? 'Email inválido'
+                    : null,
               ),
               const SizedBox(height: 12),
               SwitchListTile(
@@ -129,7 +113,7 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
                 value: _active,
                 onChanged: (val) => setState(() => _active = val),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _onSubmit,
                 child: const Text('Salvar Alterações'),
@@ -138,31 +122,6 @@ class _UserEditPageState extends ConsumerState<UserEditPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-extension UserModelCopyWith on UserModel {
-  UserModel copyWith({
-    String? login,
-    String? password,
-    String? confirmPassword,
-    String? name,
-    String? email,
-    String? registrationCode,
-    bool? active,
-  }) {
-    final pwd = password ?? this.password;
-    return UserModel(
-      // O `id` não vai para o JSON, mas fica no objeto para a URL do PUT
-      id: id,
-      login: login ?? this.login,
-      password: pwd,
-      confirmPassword: confirmPassword ?? pwd,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      registrationCode: registrationCode ?? this.registrationCode,
-      active: active ?? this.active,
     );
   }
 }
