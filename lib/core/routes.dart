@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:reservation_equipments/data/models/reservation_model.dart';
 import 'package:reservation_equipments/data/models/users_model.dart';
 import 'package:reservation_equipments/modules/home/page/home_page.dart';
+import 'package:reservation_equipments/modules/login/login.dart';
 import 'package:reservation_equipments/modules/reservation/page/reservation_create_page.dart';
 import 'package:reservation_equipments/modules/reservation/page/reservation_edit_page.dart';
 import 'package:reservation_equipments/modules/reservation/page/reservation_list_page.dart';
@@ -20,6 +21,11 @@ import '../modules/equipments/page/equipments_list_page.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/',
   routes: [
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => LoginPage(),
+    ),
     GoRoute(
       path: '/',
       name: 'home',

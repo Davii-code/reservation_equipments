@@ -1,28 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:reservation_equipments/data/models/auth_model.dart';
 
-class LoginPage extends StatefulWidget {
+import 'controllers/login_controller.dart';
+
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  void _submitLogin() async {
+  Future<void> _submitLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() => _isLoading = true);
+      // setState(() => _isLoading = true);
 
-      await Future.delayed(const Duration(seconds: 2)); // simulação
+      final authDTO = AuthDTO(
+        login:_loginController.text,
+        password: _passwordController.text
+      );
 
-      setState(() => _isLoading = false);
+      final notifier = ref.read(loginNotifierProvider.notifier);
+      await notifier.login(authDTO);
 
-      // Aqui você pode fazer a navegação
-      Navigator.pushReplacementNamed(context, '/home');
+      final stateAfter = ref.read(loginNotifierProvider);
+      final hadError = stateAfter.maybeWhen(error: (_, __) => true, orElse: () => false);
+
+      if (!hadError && mounted) {
+        context.goNamed('home');
+      }
     }
   }
 
@@ -102,5 +115,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

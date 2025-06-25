@@ -2,6 +2,8 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:reservation_equipments/data/models/auth_model.dart';
 import 'package:reservation_equipments/data/models/users_model.dart';
 import '../../core/constants.dart';
 import '../models/equipment_model.dart';
@@ -12,6 +14,7 @@ import '../../main.dart'; // ajuste o caminho conforme seu projeto
 
 class ApiService {
   final Dio _dio;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   ApiService({Dio? dio})
       : _dio = dio ??
@@ -25,6 +28,13 @@ class ApiService {
       )) {
     // Interceptor para capturar erros e mostrar SnackBar
     _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await _secureStorage.read(key: 'jwt_token');
+        if (token != null) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
       onError: (DioError err, handler) {
         final data = err.response?.data;
         if (data is Map && data['messages'] is List) {
@@ -157,5 +167,30 @@ class ApiService {
 
   Future<void> deleteUser(int id) async {
     await _dio.delete('user/$id');
+  }
+
+  Future<void> login(AuthDTO authDTO) async {
+    final response = await _dio.post(
+      'auth/login',
+      data: authDTO.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      final String? token = response.data['accessToken'];
+      await _secureStorage.write(key: 'jwt_token', value: token);
+    }
+
+    return;
+  }
+
+  Future<void> logout() async {
+    final response = await _dio.get('auth/logout');
+    if (response.statusCode == 200) {
+      await _secureStorage.delete(key: 'jwt_token');
+    }
+  }
+
+  Future<String?> getJwtToken() async {
+    return await _secureStorage.read(key: 'jwt_token');
   }
 }
