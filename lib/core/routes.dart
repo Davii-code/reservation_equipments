@@ -19,7 +19,7 @@ import '../modules/equipments/page/equipment_edit_page.dart';
 import '../modules/equipments/page/equipments_list_page.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/login',
