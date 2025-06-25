@@ -13,6 +13,27 @@ extension EquipmentStateExtension on EquipmentState {
   /// Converte para string (usado pela API).
   String toJson() => name;
 
+  String get displayName {
+    switch (this) {
+      case EquipmentState.USABLE:
+        return 'Disponível';
+      case EquipmentState.IN_MAINTENANCE:
+        return 'Em Manutenção';
+      case EquipmentState.IN_REPAIR:
+        return 'Em Conserto';
+      case EquipmentState.DEFECTIVE:
+        return 'Com Defeito';
+      case EquipmentState.OBSOLETE:
+        return 'Obsoleto';
+      case EquipmentState.RESERVED:
+        return 'Reservado';
+      case EquipmentState.AWAITING_RETURN:
+        return 'Aguardando Devolução';
+      default: // Caso algum novo estado seja adicionado e esquecido aqui
+        return name; // Retorna o nome original como fallback
+    }
+  }
+
   /// Constrói a partir do valor retornado pela API (string ou índice).
   static EquipmentState fromJson(dynamic value) {
     if (value is String) {

@@ -58,8 +58,7 @@ class _ReservationsListPageState extends ConsumerState<ReservationsListPage> {
                   itemCount: reservations.length,
                   itemBuilder: (context, index) {
                     final reservation = reservations[index];
-                    final formattedDate =
-                    DateFormat('dd MMM yyyy', 'pt_BR').format(DateTime.parse(reservation.date));
+                    final formattedDate = DateFormat('dd MMM yyyy', 'pt_BR').format(DateTime.parse(reservation.date));
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 16),

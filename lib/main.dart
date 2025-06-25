@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'core/routes.dart';
 import 'modules/home/page/home_page.dart';
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('pt_BR', null);
+
   runApp(
     ProviderScope(
       child: MyApp(), // ou seu widget raiz

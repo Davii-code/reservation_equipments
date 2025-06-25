@@ -135,7 +135,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                       decoration: const InputDecoration(labelText: 'Estado'),
                       value: _state,
                       items: EquipmentState.values
-                          .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
+                          .map((e) => DropdownMenuItem(value: e, child: Text(e.displayName)))
                           .toList(),
                       onChanged: (v) => setState(() {
                         if (v != null) _state = v;
